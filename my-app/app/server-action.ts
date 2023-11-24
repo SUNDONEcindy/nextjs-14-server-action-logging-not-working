@@ -1,16 +1,25 @@
-'use server';
-export async function myServerAction(formData: FormData) {
-  console.log("myAction: formData:", formData);
-  const sleep = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-  await sleep(3000);
+"use server";
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// It seems that if you have useFormState, you must add the extra formDataPrev parameter
+export async function myServerAction(
+  formDataPrev: FormData,
+  formData: FormData,
+) {
+  const firstname = formData?.get("firstname") ?? "";
+  const email = formData?.get("email") ?? "";
+
+  await sleep(2000);
 
   return {
-    message: "success",
-    errors: undefined,
+    message:
+      email === "bad@bad.com"
+        ? "error"
+        : "success",
+    errors: email === "bad@bad.com" ? { email: "error cause can not use bad@bad.com as email"} : undefined,
     fieldValues: {
-      firstname: "Peter",
-      email: "peter@myemail.com",
+      firstname: firstname,
+      email: email,
     },
   };
 }
