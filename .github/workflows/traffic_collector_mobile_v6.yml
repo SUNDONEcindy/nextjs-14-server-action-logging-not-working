@@ -131,7 +131,10 @@ jobs:
           cat "$OUT"
 
       - name: Commit probe results
+        # 部分仓库分支受保护 / Actions 令牌为只读, 提交产物会失败。
+        # 拨测价值在探测本身, 产物提交失败不应让整轮判定为 failure。
         if: success()
+        continue-on-error: true
         run: |
           git config user.name  "UptimeProbe Bot"
           git config user.email "probe@owner.local"
